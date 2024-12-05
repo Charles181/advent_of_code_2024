@@ -1,29 +1,34 @@
+def is_safe(levels):
+    for i in range(len(levels) - 1):
+        if abs(levels[i] - levels[i + 1]) > 3 or abs(levels[i] - levels[i + 1]) == 0:
+            return False
+    increasing = all(levels[i] < levels[i + 1] for i in range(len(levels) - 1))
+    decreasing = all(levels[i] > levels[i + 1] for i in range(len(levels) - 1))
+    return increasing or decreasing
+
+
 def main():
-    file = open('input.txt').read().strip()
-    # print(file)
-    levels = file.split('\n')
-    # print(levels)
+    with open('input.txt') as file:
+        levels = file.read().strip().split('\n')
+
     counter = 0
+    counter2 = 0
     for level in levels:
         lvl = list(map(int, level.split()))
-        safe_counter = 0
-        for i in range(len(lvl)-1):
-            safe = True
-            if i > 0:
-                if (lvl[i-1] < lvl[i] and lvl[i] > lvl[i+1]) or (lvl[i-1] > lvl[i] and lvl[i] < lvl[i+1]):
-                    continue
-            difference = abs(lvl[i] - lvl[i+1])
-            # print(difference)
-            if difference == 0 or difference > 3:
-                safe = False
-            if safe:
-                safe_counter +=1
-        if safe_counter == len(lvl)-1:
+
+        if is_safe(lvl):
             counter += 1
-        print(f"**{safe_counter}**")
-        print("-----")
-        
+            counter2 += 1
+            continue
+
+        for i in range(len(lvl)):
+            modified_levels = lvl[:i] + lvl[i + 1:]
+            if is_safe(modified_levels):
+                counter2 += 1
+                break
     print(counter)
+    print(counter2)
+
 
 if __name__ == '__main__':
     main()
